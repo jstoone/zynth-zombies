@@ -21,8 +21,8 @@ const COLORS_IN_HEX: Dictionary = {
 func _ready():
     Zynth = load('res://objects/zynth_wave.tscn')
     
-func get_random_color() -> int:
-    return randi_range(0, COLORS.size() - 1)
+func get_random_color(max_color_index: int = COLORS.size() - 1) -> int:
+    return randi_range(0, max_color_index)
 
 func get_color_hex(color_index: int):
     return COLORS_IN_HEX[color_index]
@@ -35,6 +35,6 @@ func spawn_zynth(position: Vector2) -> ZynthWave:
     
     current_zynth.global_position = position;
     
-    call_deferred("add_child", current_zynth)
+    call_deferred('add_child', current_zynth)
     
     return current_zynth

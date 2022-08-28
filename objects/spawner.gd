@@ -2,7 +2,8 @@ extends Node2D
 
 @export var spawn_margin: Vector2 = Vector2(100, 150)
 
-var Zombie := preload("res://enemies/zombie.tscn")
+const Zombie := preload("res://enemies/zombie.tscn")
+
 var wave := 0;
 
 # Called when the node enters the scene tree for the first time.

@@ -26,13 +26,6 @@ func _setup_color():
 
 func _physics_process(delta):
     var camera_position = get_viewport().get_camera_2d().position;
-#	var rotation_tangent: float = atan2(
-#		camera_position.x - position.x,
-#		camera_position.y - position.y
-#	)
-#
-#	var speed: Vector2 = Vector2(sin(rotation_tangent), cos(rotation_tangent))
-    
     var speed = position.direction_to(camera_position)
     
     velocity = speed * move_speed * delta

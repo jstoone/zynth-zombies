@@ -9,6 +9,11 @@
 config_version=5
 
 _global_script_classes=[{
+"base": "Node2D",
+"class": &"WaveManager",
+"language": &"GDScript",
+"path": "res://managers/wave_manager.gd"
+}, {
 "base": "TileMap",
 "class": &"WorldMap",
 "language": &"GDScript",
@@ -30,6 +35,7 @@ _global_script_classes=[{
 "path": "res://objects/zynth_wave.gd"
 }]
 _global_script_class_icons={
+"WaveManager": "",
 "WorldMap": "",
 "Zombie": "",
 "ZynthPad": "",

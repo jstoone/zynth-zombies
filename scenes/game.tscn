@@ -1,14 +1,17 @@
-[gd_scene load_steps=5 format=3 uid="uid://gp048xd8qfoa"]
+[gd_scene load_steps=7 format=3 uid="uid://gp048xd8qfoa"]
 
 [ext_resource type="PackedScene" uid="uid://dn2tdmda46svp" path="res://characters/player.tscn" id="1_g8ptb"]
 [ext_resource type="Script" path="res://objects/world_map.gd" id="2_1ptet"]
 [ext_resource type="TileSet" uid="uid://c3f0w2v5p0xp7" path="res://tile_sets/ground.tres" id="2_oefat"]
-[ext_resource type="Script" path="res://objects/spawner.gd" id="4_xffrt"]
+[ext_resource type="PackedScene" uid="uid://27miemj57a1k" path="res://managers/spawn_manager.tscn" id="4_wvcur"]
+[ext_resource type="PackedScene" uid="uid://qess3ahujlln" path="res://managers/wave_manager.tscn" id="5_bb4k2"]
+[ext_resource type="PackedScene" uid="uid://d3xgyacwsqid8" path="res://objects/pad.tscn" id="6_i25x7"]
 
 [node name="ZynthWorld" type="Node2D"]
 metadata/_edit_lock_ = true
 
 [node name="main_camera" type="Camera2D" parent="."]
+z_index = 100
 current = true
 
 [node name="world_map" type="TileMap" parent="."]
@@ -22,14 +25,30 @@ metadata/_edit_lock_ = true
 
 [node name="player" parent="." instance=ExtResource("1_g8ptb")]
 
-[node name="remote_main_camera" type="RemoteTransform2D" parent="player"]
+[node name="RemoteTransform2D" type="RemoteTransform2D" parent="player"]
 remote_path = NodePath("../../main_camera")
-metadata/_edit_lock_ = true
 
-[node name="spawner" type="Node2D" parent="."]
-script = ExtResource("4_xffrt")
+[node name="spawn_manager" parent="." node_paths=PackedStringArray("wave_label") instance=ExtResource("4_wvcur")]
+wave_label = NodePath("../CanvasLayer/WaveLabel")
 
-[node name="Timer" type="Timer" parent="spawner"]
-autostart = true
+[node name="wave_manager" parent="." instance=ExtResource("5_bb4k2")]
 
-[connection signal="timeout" from="spawner/Timer" to="spawner" method="_on_timer_timeout"]
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="WaveLabel" type="Label" parent="CanvasLayer"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = -32.0
+offset_right = 68.0
+offset_bottom = -6.0
+text = "wave: 0"
+
+[node name="pad" parent="." instance=ExtResource("6_i25x7")]
+position = Vector2(-231, -126)
+
+[connection signal="spawned_zombie" from="spawn_manager" to="wave_manager" method="_on_spawn_manager_spawned_zombie"]
+[connection signal="goal_reached" from="wave_manager" to="spawn_manager" method="_on_wave_manager_goal_reached"]
+
+[editable path="spawn_manager"]
+[editable path="wave_manager"]

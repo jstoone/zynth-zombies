@@ -1,16 +1,24 @@
 extends Node2D
 
+signal spawned_zombie(zombie: Zombie)
+
+@export var wave_label: Label = null;
 @export var spawn_margin: Vector2 = Vector2(100, 150)
 
 const Zombie := preload("res://enemies/zombie.tscn")
 
+# Will be set by wave manager
 var wave := 0;
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
     spawn_enemy()
-
+    
+func _process(_delta: float) -> void:
+    wave_label.text = 'wave: %s' %wave
+ 
 func spawn_enemy() -> Zombie:
+
     var viewport: Rect2 = get_viewport_rect()
     var current_position: Vector2 = get_viewport().get_camera_2d().position
     var current_zombie: Zombie = Zombie.instantiate()
@@ -28,8 +36,15 @@ func spawn_enemy() -> Zombie:
     current_zombie.set_color(Globals.get_random_color(max_color_index))
     
     add_child(current_zombie)
+    emit_signal("spawned_zombie", current_zombie)
     
     return current_zombie;
 
 func _on_timer_timeout():
     spawn_enemy()
+
+
+func _on_wave_manager_goal_reached(wave_goal) -> void:
+    wave += 1
+    
+    print(wave)

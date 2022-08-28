@@ -1,6 +1,8 @@
 class_name Zombie
 extends CharacterBody2D
 
+signal killed()
+
 @export var move_speed: int = 2000
 
 var current_color: int = Globals.COLORS.RED
@@ -12,6 +14,8 @@ func kill():
     var ripple_zynth: ZynthWave = Globals.spawn_zynth(global_position)
     ripple_zynth.set_color(current_color)
     ripple_zynth.scale *= 0.35
+    
+    emit_signal("killed")
     
     queue_free();
     

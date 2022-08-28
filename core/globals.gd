@@ -19,7 +19,7 @@ const COLORS_IN_HEX: Dictionary = {
 }
 
 func _ready():
-    Zynth = load("res://objects/zynth_wave.tscn")
+    Zynth = load('res://objects/zynth_wave.tscn')
     
 func get_random_color() -> int:
     return randi_range(0, COLORS.size() - 1)

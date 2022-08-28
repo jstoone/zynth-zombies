@@ -3,6 +3,7 @@ extends Node2D
 @export var spawn_margin: Vector2 = Vector2(100, 150)
 
 var Zombie := preload("res://enemies/zombie.tscn")
+var wave := 0;
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -22,7 +23,8 @@ func spawn_enemy() -> Zombie:
         (1 if randi_range(0, 1) else -1) * randf_range(viewport.size.y/2, (viewport.size.y / 2) + spawn_margin.y),
     )
     
-    current_zombie.set_color(Globals.get_random_color())
+    var max_color_index = wave / 2
+    current_zombie.set_color(Globals.get_random_color(max_color_index))
     
     add_child(current_zombie)
     

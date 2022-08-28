@@ -1,6 +1,7 @@
 class_name ZynthPad
 extends Sprite2D
 
+var reactive_after: float = 1.5
 var current_color: int = Globals.COLORS.RED
 var is_active: bool = true
 
@@ -19,3 +20,7 @@ func _on_body_entered(_body: CharacterBody2D):
 
     is_active = false
     Globals.spawn_zynth(global_position).set_color(current_color)
+    get_tree().create_timer(reactive_after, false).connect("timeout", _reactivate)
+    
+func _reactivate():
+    is_active = true;

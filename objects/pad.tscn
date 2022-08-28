@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=3 uid="uid://d3xgyacwsqid8"]
+
+[ext_resource type="Texture2D" uid="uid://btnhl4jiyyly2" path="res://art/zz_pads.png" id="1_6prki"]
+[ext_resource type="Script" path="res://objects/pad.gd" id="2_bxt7d"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_b44mv"]
+size = Vector2(16, 16)
+
+[node name="pad" type="Sprite2D"]
+texture = ExtResource("1_6prki")
+hframes = 4
+vframes = 2
+script = ExtResource("2_bxt7d")
+
+[node name="Area2D" type="Area2D" parent="."]
+collision_layer = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("RectangleShape2D_b44mv")
+
+[connection signal="body_entered" from="Area2D" to="." method="_on_body_entered"]

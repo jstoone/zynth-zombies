@@ -1,0 +1,77 @@
+[gd_scene load_steps=17 format=3 uid="uid://d376a7lhjp2v"]
+
+[ext_resource type="Texture2D" uid="uid://bjwpcwikv0dlh" path="res://art/zz_zombie.png" id="1_636nw"]
+[ext_resource type="Script" path="res://enemies/zombie.gd" id="1_v8y7e"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fk6g4"]
+atlas = ExtResource("1_636nw")
+region = Rect2(0, 0, 16, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8kfsx"]
+atlas = ExtResource("1_636nw")
+region = Rect2(16, 0, 16, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s8gtw"]
+atlas = ExtResource("1_636nw")
+region = Rect2(32, 0, 16, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yqtjd"]
+atlas = ExtResource("1_636nw")
+region = Rect2(48, 0, 16, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mqu0t"]
+atlas = ExtResource("1_636nw")
+region = Rect2(64, 0, 16, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wm7tx"]
+atlas = ExtResource("1_636nw")
+region = Rect2(80, 0, 16, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u4g1e"]
+atlas = ExtResource("1_636nw")
+region = Rect2(96, 0, 16, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_g4hal"]
+atlas = ExtResource("1_636nw")
+region = Rect2(112, 0, 16, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1ugq5"]
+atlas = ExtResource("1_636nw")
+region = Rect2(128, 0, 16, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a18ak"]
+atlas = ExtResource("1_636nw")
+region = Rect2(144, 0, 16, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_brs18"]
+atlas = ExtResource("1_636nw")
+region = Rect2(160, 0, 16, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_17eyi"]
+atlas = ExtResource("1_636nw")
+region = Rect2(176, 0, 16, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_heoko"]
+animations = [{
+"frames": [SubResource("AtlasTexture_fk6g4"), SubResource("AtlasTexture_8kfsx"), SubResource("AtlasTexture_s8gtw"), SubResource("AtlasTexture_yqtjd"), SubResource("AtlasTexture_mqu0t"), SubResource("AtlasTexture_wm7tx"), SubResource("AtlasTexture_u4g1e"), SubResource("AtlasTexture_g4hal"), SubResource("AtlasTexture_1ugq5"), SubResource("AtlasTexture_a18ak"), SubResource("AtlasTexture_brs18"), SubResource("AtlasTexture_17eyi")],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_lvfgr"]
+size = Vector2(16, 32)
+
+[node name="zombie" type="CharacterBody2D"]
+modulate = Color(1, 0.215686, 0.192157, 1)
+collision_layer = 2
+collision_mask = 3
+script = ExtResource("1_v8y7e")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+frames = SubResource("SpriteFrames_heoko")
+frame = 7
+playing = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_lvfgr")

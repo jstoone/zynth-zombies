@@ -1,7 +1,5 @@
 extends Node
 
-var Zynth: PackedScene = null
-
 const COLOR_LAYER_OFFSET = 5
 
 enum COLORS {
@@ -18,11 +16,13 @@ const COLORS_IN_HEX: Dictionary = {
     COLORS.YELLOW: Color('#ffee00'),
 }
 
+var Zynth: PackedScene = null
+
 func _ready():
     Zynth = load('res://objects/zynth_wave.tscn')
     
 func get_random_color(max_color_index: int = COLORS.size() - 1) -> int:
-    return randi_range(0, max_color_index)
+    return min(randi_range(0, max_color_index), COLORS.size() -1);
 
 func get_color_hex(color_index: int):
     return COLORS_IN_HEX[color_index]

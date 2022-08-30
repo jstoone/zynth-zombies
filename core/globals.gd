@@ -26,7 +26,7 @@ func get_random_color(max_color_index: int = COLORS.size() - 1) -> int:
 func get_color_hex(color_index: int):
     return COLORS_IN_HEX[color_index]
 
-func color_to_layer_value(color_index: int):
+func get_color_layer(color_index: int):
     return color_index + COLOR_LAYER_OFFSET
     
 func spawn_zynth(position: Vector2) -> ZynthWave:

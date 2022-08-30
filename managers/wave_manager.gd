@@ -3,7 +3,7 @@ extends Node2D
 
 signal wave_started(wave: int)
 
-@onready var wave_label := $'../CanvasLayer/WaveLabel'
+@onready var wave_label := $'../ui_overlay/wave_label'
 
 var wave = 0
 var wave_goal := 50

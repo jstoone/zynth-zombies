@@ -17,7 +17,7 @@ _global_script_classes=[{
 "base": "TileMap",
 "class": &"WorldMap",
 "language": &"GDScript",
-"path": "res://objects/world_map.gd"
+"path": "res://core/world_map.gd"
 }, {
 "base": "CharacterBody2D",
 "class": &"Zombie",
@@ -45,7 +45,7 @@ _global_script_class_icons={
 [application]
 
 config/name="zynth-zombies"
-run/main_scene="res://scenes/game.tscn"
+run/main_scene="res://core/game.tscn"
 config/features=PackedStringArray("4.0", "Vulkan Clustered")
 config/icon="res://icon.png"
 

@@ -23,7 +23,7 @@ func _ready():
     _setup_color()
     
 func _setup_color():
-    var colorLayerValue: int = Globals.color_to_layer_value(current_color)
+    var colorLayerValue: int = Globals.get_color_layer(current_color)
     set_collision_layer_value(colorLayerValue, true)
     
     modulate = Globals.get_color_hex(current_color)

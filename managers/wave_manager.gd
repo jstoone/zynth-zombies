@@ -1,21 +1,27 @@
 class_name WaveManager
 extends Node2D
 
-signal goal_reached(wave_goal: int)
-signal registered_kill(zombie: Zombie)
+signal wave_started(wave: int)
 
-@export var wave_progress := 0
-@export var next_wave_goal := 50
+@onready var wave_label := $'../CanvasLayer/WaveLabel'
+
+var wave = 0
+var wave_goal := 50
+var wave_progress := 0
+
+func _process(_delta: float) -> void:
+    wave_label.text = 'wave: %s' %wave
 
 func _on_spawn_manager_spawned_zombie(zombie: Zombie) -> void:
-    zombie.killed.connect(_register_kill.bind(zombie))
+    zombie.killed.connect(_register_kill)
     
 func _register_kill(zombie) -> void:
-    emit_signal("registered_kill", zombie)
     wave_progress += 1
-    print(wave_progress)
     
-    if (wave_progress >= next_wave_goal):
-        emit_signal("goal_reached", wave_progress)
-        wave_progress = 0;
-        next_wave_goal += 25
+    if wave_progress >= wave_goal:
+        _complete_wave() 
+
+func _complete_wave():
+    wave += 1
+    wave_progress = 0
+    emit_signal("wave_started", wave)    

@@ -5,20 +5,13 @@ signal spawned_zombie(zombie: Zombie)
 @export var wave_label: Label = null;
 @export var spawn_margin: Vector2 = Vector2(100, 150)
 
+@onready var WaveManager := $"../wave_manager" as WaveManager
+
 const Zombie := preload("res://enemies/zombie.tscn")
 
-# Will be set by wave manager
-var wave := 0;
-
-# Called when the node enters the scene tree for the first time.
-func _ready():
-    spawn_enemy()
-    
-func _process(_delta: float) -> void:
-    wave_label.text = 'wave: %s' %wave
+var difficulty := 0.0
  
 func spawn_enemy() -> Zombie:
-
     var viewport: Rect2 = get_viewport_rect()
     var current_position: Vector2 = get_viewport().get_camera_2d().position
     var current_zombie: Zombie = Zombie.instantiate()
@@ -32,8 +25,7 @@ func spawn_enemy() -> Zombie:
         (1 if randi_range(0, 1) else -1) * randf_range(viewport.size.y/2, (viewport.size.y / 2) + spawn_margin.y),
     )
     
-    var max_color_index = wave / 2
-    current_zombie.set_color(Globals.get_random_color(max_color_index))
+    current_zombie.set_color(Globals.get_random_color(difficulty))
     
     add_child(current_zombie)
     emit_signal("spawned_zombie", current_zombie)
@@ -43,8 +35,6 @@ func spawn_enemy() -> Zombie:
 func _on_timer_timeout():
     spawn_enemy()
 
-
-func _on_wave_manager_goal_reached(wave_goal) -> void:
-    wave += 1
+func _on_wave_manager_wave_started(wave) -> void:
+    difficulty = wave / 2
     
-    print(wave)

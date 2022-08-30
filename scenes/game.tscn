@@ -1,11 +1,10 @@
-[gd_scene load_steps=7 format=3 uid="uid://gp048xd8qfoa"]
+[gd_scene load_steps=6 format=3 uid="uid://gp048xd8qfoa"]
 
 [ext_resource type="PackedScene" uid="uid://dn2tdmda46svp" path="res://characters/player.tscn" id="1_g8ptb"]
 [ext_resource type="Script" path="res://objects/world_map.gd" id="2_1ptet"]
 [ext_resource type="TileSet" uid="uid://c3f0w2v5p0xp7" path="res://tile_sets/ground.tres" id="2_oefat"]
 [ext_resource type="PackedScene" uid="uid://27miemj57a1k" path="res://managers/spawn_manager.tscn" id="4_wvcur"]
 [ext_resource type="PackedScene" uid="uid://qess3ahujlln" path="res://managers/wave_manager.tscn" id="5_bb4k2"]
-[ext_resource type="PackedScene" uid="uid://d3xgyacwsqid8" path="res://objects/pad.tscn" id="6_i25x7"]
 
 [node name="ZynthWorld" type="Node2D"]
 metadata/_edit_lock_ = true
@@ -44,11 +43,8 @@ offset_right = 68.0
 offset_bottom = -6.0
 text = "wave: 0"
 
-[node name="pad" parent="." instance=ExtResource("6_i25x7")]
-position = Vector2(-231, -126)
-
 [connection signal="spawned_zombie" from="spawn_manager" to="wave_manager" method="_on_spawn_manager_spawned_zombie"]
-[connection signal="goal_reached" from="wave_manager" to="spawn_manager" method="_on_wave_manager_goal_reached"]
+[connection signal="wave_started" from="wave_manager" to="spawn_manager" method="_on_wave_manager_wave_started"]
 
 [editable path="spawn_manager"]
 [editable path="wave_manager"]

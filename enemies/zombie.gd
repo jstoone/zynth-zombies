@@ -1,7 +1,7 @@
 class_name Zombie
 extends CharacterBody2D
 
-signal killed()
+signal killed(zombie: Zombie)
 
 @export var move_speed: int = 2000
 
@@ -15,7 +15,7 @@ func kill():
     ripple_zynth.set_color(current_color)
     ripple_zynth.scale *= 0.35
     
-    emit_signal("killed")
+    emit_signal("killed", self)
     
     queue_free();
     

@@ -1,7 +1,5 @@
 extends Node
 
-const COLOR_LAYER_OFFSET = 5
-
 enum COLORS {
     RED,
     BLUE,
@@ -9,6 +7,7 @@ enum COLORS {
     YELLOW,
 }
 
+const COLOR_LAYER_OFFSET = 5
 const COLORS_IN_HEX: Dictionary = {
     COLORS.RED: Color('#ff3731'),
     COLORS.BLUE: Color('#6882f6'),
@@ -22,7 +21,7 @@ func _ready():
     Zynth = load('res://objects/zynth_wave.tscn')
     
 func get_random_color(max_color_index: int = COLORS.size() - 1) -> int:
-    return min(randi_range(0, max_color_index), COLORS.size() -1);
+    return min(randi_range(0, max_color_index), COLORS.size() -1)
 
 func get_color_hex(color_index: int):
     return COLORS_IN_HEX[color_index]

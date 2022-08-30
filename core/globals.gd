@@ -9,10 +9,10 @@ enum COLORS {
 
 const COLOR_LAYER_OFFSET = 5
 const COLORS_IN_HEX: Dictionary = {
-    COLORS.RED: Color('#ff3731'),
-    COLORS.BLUE: Color('#6882f6'),
-    COLORS.GREEN: Color('#58cd30'),
-    COLORS.YELLOW: Color('#ffee00'),
+    COLORS.RED: Color('ff3731'),
+    COLORS.BLUE: Color('6882f6'),
+    COLORS.GREEN: Color('58cd30'),
+    COLORS.YELLOW: Color('ffee00'),
 }
 
 var Zynth: PackedScene = null

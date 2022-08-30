@@ -6,10 +6,7 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_b44mv"]
 size = Vector2(16, 16)
 
-[node name="pad" type="Sprite2D"]
-texture = ExtResource("1_6prki")
-hframes = 4
-vframes = 2
+[node name="pad" type="Node2D"]
 script = ExtResource("2_bxt7d")
 
 [node name="Area2D" type="Area2D" parent="."]
@@ -17,5 +14,20 @@ collision_layer = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
 shape = SubResource("RectangleShape2D_b44mv")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+color = Color(1, 0.215686, 0.192157, 1)
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_6prki")
+hframes = 2
 
 [connection signal="body_entered" from="Area2D" to="." method="_on_body_entered"]

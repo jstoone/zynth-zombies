@@ -1,5 +1,8 @@
 class_name ZynthPad
-extends Sprite2D
+extends Node2D
+
+@onready var background: ColorRect = $ColorRect
+@onready var frame: Sprite2D = $Sprite2D
 
 var reactive_after: float = 5
 var current_color: int = Globals.COLORS.RED
@@ -9,10 +12,8 @@ func set_color(color_index: int):
     current_color = color_index
     
 func _process(_delta):
-    frame_coords = Vector2(
-        current_color,
-        0 if is_active else 1
-    )
+    background.color = Color(Globals.get_color_hex(current_color))
+    frame.frame = 0 if is_active else 1
 
 func _on_body_entered(_body: CharacterBody2D):
     if not is_active:

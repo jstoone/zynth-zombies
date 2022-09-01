@@ -45,7 +45,6 @@ scale = Vector2(2, 2)
 z_index = 1
 texture = ExtResource("1_qgp30")
 hframes = 15
-frame = 14
 script = ExtResource("2_13j6u")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]

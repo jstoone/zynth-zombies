@@ -37,6 +37,7 @@ _data = {
 }
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_xhkdo"]
+resource_local_to_scene = true
 radius = 17.0
 
 [node name="zynth_wave" type="Sprite2D"]

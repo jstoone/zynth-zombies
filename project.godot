@@ -9,6 +9,11 @@
 config_version=5
 
 _global_script_classes=[{
+"base": "CharacterBody2D",
+"class": &"Player",
+"language": &"GDScript",
+"path": "res://characters/player.gd"
+}, {
 "base": "Node2D",
 "class": &"WaveManager",
 "language": &"GDScript",
@@ -35,6 +40,7 @@ _global_script_classes=[{
 "path": "res://objects/zynth_wave.gd"
 }]
 _global_script_class_icons={
+"Player": "",
 "WaveManager": "",
 "WorldMap": "",
 "Zombie": "",

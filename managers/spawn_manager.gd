@@ -2,39 +2,37 @@ extends Node2D
 
 signal spawned_zombie(zombie: Zombie)
 
-@export var wave_label: Label = null;
-@export var spawn_margin: Vector2 = Vector2(100, 150)
-
-@onready var WaveManager := $"../wave_manager" as WaveManager
+@export var difficulty := 0.0
+@export var spawn_offset := Vector2(70, 50)
 
 const Zombie := preload("res://enemies/zombie.tscn")
 
-var difficulty := 0.0
+@onready var WaveManager := $"../wave_manager" as WaveManager
+@onready var Player := $"../player" as Player
+@onready var spawn_peak := Vector2(get_viewport_rect().size.x / 2, get_viewport_rect().size.y / 2)
  
 func spawn_enemy() -> Zombie:
-    var viewport: Rect2 = get_viewport_rect()
-    var current_position: Vector2 = get_viewport().get_camera_2d().position
     var current_zombie: Zombie = Zombie.instantiate()
     
-    # Generate new position outside of the viewport,
-    #   but within the margin offset.
-    # There is a 50/50 chance that the coordinate will negate
-    #   this is so that the enemy can be left, right, up and down.
-    current_zombie.position = current_position + Vector2(
-        (1 if randi_range(0, 1) else -1) * randf_range(viewport.size.x/2, (viewport.size.x / 2) + spawn_margin.x),
-        (1 if randi_range(0, 1) else -1) * randf_range(viewport.size.y/2, (viewport.size.y / 2) + spawn_margin.y),
-    )
-    
     current_zombie.set_color(Globals.get_random_color(difficulty))
+    current_zombie.position = _get_spawn_position()
     
     add_child(current_zombie)
     emit_signal("spawned_zombie", current_zombie)
     
     return current_zombie;
+    
+func _get_spawn_position() -> Vector2:
+    var center = Player.position
+    var angle = randf_range(0, TAU)
+
+    return Vector2(
+        center.x + ((spawn_peak.x+spawn_offset.x) * sin(angle)),
+        center.y + ((spawn_peak.y+spawn_offset.y) * cos(angle))
+    )
 
 func _on_timer_timeout():
     spawn_enemy()
 
 func _on_wave_manager_wave_started(wave) -> void:
     difficulty = wave / 2
-    

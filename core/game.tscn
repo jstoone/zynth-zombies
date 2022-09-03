@@ -30,8 +30,7 @@ move_speed = 5500.0
 [node name="RemoteTransform2D" type="RemoteTransform2D" parent="player"]
 remote_path = NodePath("../../main_camera")
 
-[node name="spawn_manager" parent="." node_paths=PackedStringArray("wave_label") instance=ExtResource("5_jo6dq")]
-wave_label = NodePath("../ui_overlay/wave_label")
+[node name="spawn_manager" parent="." instance=ExtResource("5_jo6dq")]
 
 [node name="wave_manager" parent="." instance=ExtResource("6_ktpnq")]
 

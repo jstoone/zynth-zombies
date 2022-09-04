@@ -44,6 +44,7 @@ scale = Vector2(0.5, 0.5)
 text = "wave: 0"
 
 [node name="fps_label" type="Label" parent="ui_overlay"]
+anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
 offset_left = -19.0
@@ -53,9 +54,6 @@ grow_horizontal = 0
 scale = Vector2(0.3, 0.3)
 text = "000"
 horizontal_alignment = 2
-
-[connection signal="spawned_zombie" from="spawn_manager" to="wave_manager" method="_on_spawn_manager_spawned_zombie"]
-[connection signal="wave_started" from="wave_manager" to="spawn_manager" method="_on_wave_manager_wave_started"]
 
 [editable path="spawn_manager"]
 [editable path="wave_manager"]

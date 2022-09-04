@@ -1,5 +1,5 @@
-extends Sprite2D
 class_name ZynthWave
+extends Sprite2D
 
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
 @onready var collision_area: Area2D = $Area2D

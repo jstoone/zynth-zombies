@@ -1,10 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://bjfgwxddgik4s"]
+[gd_scene load_steps=5 format=3 uid="uid://bnjul76cae13j"]
 
-[ext_resource type="Texture2D" uid="uid://b13mhran051k3" path="res://art/pixel.png" id="1_dwoij"]
-[ext_resource type="Texture2D" uid="uid://bjwpcwikv0dlh" path="res://art/zz_zombie.png" id="1_gifff"]
+[ext_resource type="Script" path="res://effects/death_effect.gd" id="1_yexel"]
+[ext_resource type="Texture2D" uid="uid://c831nnrt4tqgg" path="res://art/zz_zombie_single.png" id="2_xoh6k"]
 
-[sub_resource type="Shader" id="Shader_c1cbm"]
-code = "// NOTE: Shader automatically converted from Godot Engine 4.0.alpha14's ParticlesMaterial.
+[sub_resource type="Shader" id="Shader_k6l3g"]
+code = "// NOTE: Shader automatically converted from Godot Engine 4.0.alpha15's ParticleProcessMaterial.
 
 shader_type particles;
 uniform vec3 direction;
@@ -38,8 +38,69 @@ uniform float lifetime_randomness;
 uniform vec3 emission_box_extents;
 uniform vec4 color_value : source_color;
 uniform vec3 gravity;
+uniform float turbulence_noise_strength;
+uniform float turbulence_noise_scale;
+uniform float turbulence_influence_min;
+uniform float turbulence_influence_max;
+uniform float turbulence_initial_displacement_min;
+uniform float turbulence_initial_displacement_max;
+uniform float turbulence_noise_speed_random;
+uniform vec3 turbulence_noise_speed = vec3(1.0, 1.0, 1.0);
 uniform sampler2D sprite;
 
+
+// 3D Noise with friendly permission by Inigo Quilez
+vec3 hash_noise( vec3 p ) {
+	p *= mat3(vec3(127.1, 311.7, -53.7), vec3(269.5, 183.3, 77.1), vec3(-301.7, 27.3, 215.3));
+	return 2.0 * fract(fract(p)*4375.55) -1.;
+}
+
+float noise( vec3 p) {
+	vec3 i = floor(p);;
+	vec3 f = fract(p);
+ 	vec3 u = f * f * (3.0 - 2.0 * f);
+
+	return 2.0*mix( mix( mix( dot( hash_noise( i + vec3(0.0,0.0,0.0) ), f - vec3(0.0,0.0,0.0) ), dot( hash_noise( i + vec3(1.0,0.0,0.0) ), f - vec3(1.0,0.0,0.0) ), u.x),
+			mix( dot( hash_noise( i + vec3(0.0,1.0,0.0) ), f - vec3(0.0,1.0,0.0) ), dot( hash_noise( i + vec3(1.0,1.0,0.0) ), f - vec3(1.0,1.0,0.0) ), u.x), u.y),
+		mix( mix( dot( hash_noise( i + vec3(0.0,0.0,1.0) ), f - vec3(0.0,0.0,1.0) ), dot( hash_noise( i + vec3(1.0,0.0,1.0) ), f - vec3(1.0,0.0,1.0) ), u.x),
+			mix( dot( hash_noise( i + vec3(0.0,1.0,1.0) ), f - vec3(0.0,1.0,1.0) ), dot( hash_noise( i + vec3(1.0,1.0,1.0) ), f - vec3(1.0,1.0,1.0) ), u.x), u.y), u.z);
+}
+
+// Curl 3D and noise_3d function with friendly permission by Isaac Cohen
+vec3 noise_3d(vec3 p) {
+	float s = noise(p);
+	float s1 = noise(vec3(p.y - 19.1, p.z + 33.4, p.x + 47.2));
+   float s2 = noise(vec3(p.z + 74.2, p.x - 124.5, p.y + 99.4));
+	vec3 c = vec3(s, s1, s2);
+	return c;
+}
+
+vec3 curl_3d(vec3 p, float c) {
+	float epsilon = 0.001 + c;
+	vec3 dx = vec3(epsilon, 0.0, 0.0);
+	vec3 dy = vec3(0.0, epsilon, 0.0);
+	vec3 dz = vec3(0.0, 0.0, epsilon);
+	vec3 x0 = noise_3d(p - dx).xyz;
+	vec3 x1 = noise_3d(p + dx).xyz;
+	vec3 y0 = noise_3d(p - dy).xyz;
+	vec3 y1 = noise_3d(p + dy).xyz;
+	vec3 z0 = noise_3d(p - dz).xyz;
+	vec3 z1 = noise_3d(p + dz).xyz;
+	float x = y1.z - y0.z - z1.y + z0.y;
+	float y = z1.x - z0.x - x1.z + x0.z;
+	float z = x1.y - x0.y - y1.x + y0.x;
+	float divisor = 1.0 / (2.0 * epsilon);
+	return vec3(normalize(vec3(x, y, z) * divisor));
+}
+vec3 get_noise_direction(vec3 pos, vec3 emission_pos, vec3 time_noise) {
+	float adj_contrast = max((turbulence_noise_strength - 1.0), 0.0) * 70.0;
+	vec3 noise_time = (vec3(TIME) * turbulence_noise_speed) + time_noise;
+	vec3 noise_pos = (pos * turbulence_noise_scale) - emission_pos;
+	vec3 diff = pos - emission_pos;
+	vec3 noise_direction = curl_3d(noise_pos + noise_time - diff, adj_contrast);
+	noise_direction = mix(0.9 * noise_direction, noise_direction, turbulence_noise_strength - 9.0);
+	return noise_direction;
+}
 
 
 float rand_from_seed(inout uint seed) {
@@ -94,16 +155,21 @@ void start() {
 	CUSTOM.w = (1.0 - lifetime_randomness * rand_from_seed(alt_seed));
 	CUSTOM.z = (tex_anim_offset) * mix(anim_offset_min, anim_offset_max, anim_offset_rand);
 	if (RESTART_POSITION) {
-        TRANSFORM[3].xyz = vec3(rand_from_seed(alt_seed) * 2.0 - 1.0, rand_from_seed(alt_seed) * 2.0 - 1.0, rand_from_seed(alt_seed) * 2.0 - 1.0) * emission_box_extents;
-        if (RESTART_VELOCITY) VELOCITY = (EMISSION_TRANSFORM * vec4(VELOCITY, 0.0)).xyz;
-	   TRANSFORM = EMISSION_TRANSFORM * TRANSFORM;
-	   VELOCITY.z = 0.0;
-	   TRANSFORM[3].z = 0.0;
-	}  
+		TRANSFORM[3].xyz = vec3(rand_from_seed(alt_seed) * 2.0 - 1.0, rand_from_seed(alt_seed) * 2.0 - 1.0, rand_from_seed(alt_seed) * 2.0 - 1.0) * emission_box_extents;
+	if (RESTART_VELOCITY) VELOCITY = (EMISSION_TRANSFORM * vec4(VELOCITY, 0.0)).xyz;
+	vec3 time_noise = noise_3d( vec3(TIME) * turbulence_noise_speed_random ) * -turbulence_noise_speed;
+	vec3 noise_direction = get_noise_direction(TRANSFORM[3].xyz, EMISSION_TRANSFORM[3].xyz, time_noise);
+	float turb_init_displacement = mix(turbulence_initial_displacement_min, turbulence_initial_displacement_max, rand_from_seed(alt_seed));	TRANSFORM[3].xyz += noise_direction * turb_init_displacement;
+	TRANSFORM = EMISSION_TRANSFORM * TRANSFORM;
+	VELOCITY.z = 0.0;
+	TRANSFORM[3].z = 0.0;
+	}
     
-    vec2 particlePosition = TRANSFORM[3].xy + vec2(8.0, 15.5);
+    vec2 positionOffset = vec2(8.0, 16.0);
+    // add position offset to center the sprite at (0,0)
+    vec2 particlePosition = TRANSFORM[3].xy + positionOffset;
     vec2 textureS = vec2(textureSize(sprite, 0));
-    vec4 spriteColor = texture(sprite, particlePosition / textureS + vec2(0.0, 0.0));
+    vec4 spriteColor = texture(sprite, particlePosition / textureS);
     COLOR = spriteColor * color_value;
     
     if (spriteColor.a == 0.0) {
@@ -149,7 +215,17 @@ void process() {
 
 	// apply attractor forces
 	VELOCITY += force * DELTA;
+	// apply turbulence
+	const float turbulence_influence = 1.0;
 	
+	vec3 time_noise = noise_3d( vec3(TIME) * turbulence_noise_speed_random ) * -turbulence_noise_speed;
+	vec3 noise_direction = get_noise_direction(TRANSFORM[3].xyz, EMISSION_TRANSFORM[3].xyz, time_noise);
+	if (!COLLIDED) {
+		
+		float vel_mag = length(VELOCITY);
+		float vel_infl = clamp(mix(turbulence_influence_min, turbulence_influence_max, rand_from_seed(alt_seed)) * turbulence_influence, 0.0, 1.0);
+		VELOCITY = mix(VELOCITY, normalize(noise_direction) * vel_mag * (1.0 + (1.0 - vel_infl) * 0.2), vel_infl);
+	}	
 	// orbit velocity
 	float orbit_amount = tex_orbit_velocity * mix(orbit_velocity_min, orbit_velocity_max, rand_from_seed(alt_seed));
 	if (orbit_amount != 0.0) {
@@ -204,53 +280,58 @@ void process() {
 	if (CUSTOM.y > CUSTOM.w) {
 		ACTIVE = false;
 	}
-    
-    if (COLOR.a > 0.0) {
-        COLOR.a -= 1.5 / LIFETIME * DELTA;
-    }
 }
 
 "
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_60ebb"]
-shader = SubResource("Shader_c1cbm")
-tangent_accel_min = 0.0
-tangent_accel_max = 0.0
-sprite = ExtResource("1_gifff")
-spread = 15.0
-scale_min = 0.1
-scale_max = 1.0
-radial_accel_min = 0.0
-radial_accel_max = 0.0
-orbit_velocity_min = 0.0
-orbit_velocity_max = 0.0
-linear_accel_min = 0.0
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_qdwtr"]
+shader = SubResource("Shader_k6l3g")
 linear_accel_max = 0.0
-lifetime_randomness = 0.0
-initial_linear_velocity_min = 0.0
-initial_linear_velocity_max = 10.0
-initial_angle_min = 0.0
+linear_accel_min = 0.0
+orbit_velocity_max = 0.0
+orbit_velocity_min = 0.0
+radial_accel_max = 0.0
+radial_accel_min = 0.0
+scale_max = 1.0
+scale_min = 1.0
+spread = 45.0
+sprite = ExtResource("2_xoh6k")
+tangent_accel_max = 0.0
+tangent_accel_min = 0.0
+turbulence_influence_max = 0.3
+turbulence_influence_min = 0.1
+turbulence_initial_displacement_max = 0.0
+turbulence_initial_displacement_min = 0.0
+turbulence_noise_scale = 0.896006
+turbulence_noise_speed = Vector3(0.5, 0.5, 0.5)
+turbulence_noise_speed_random = 0.0
+turbulence_noise_strength = 1.0
 angular_velocity_max = 0.0
 angular_velocity_min = 0.0
-anim_offset_max = 10.0
+anim_offset_max = 0.0
 anim_offset_min = 0.0
-anim_speed_max = 20.0
-anim_speed_min = 1.0
-color_value = Color(1, 0.215686, 0.192157, 1)
+anim_speed_max = 0.0
+anim_speed_min = 0.0
+color_value = Color(1, 1, 1, 1)
 damping_max = 0.0
 damping_min = 0.0
-direction = Vector3(0, -1, 0)
-emission_box_extents = Vector3(8, 16, 0)
+direction = Vector3(0, 10, 0)
+emission_box_extents = Vector3(8, 16, 1)
 flatness = 0.0
-gravity = Vector3(0, -1e-06, 0)
+gravity = Vector3(0, -50, 0)
 hue_variation_max = 0.0
 hue_variation_min = 0.0
 initial_angle_max = 0.0
+initial_angle_min = 0.0
+initial_linear_velocity_max = 0.0
+initial_linear_velocity_min = 0.0
+lifetime_randomness = 1.0
 
-[node name="GPUParticles2D" type="GPUParticles2D"]
+[node name="death_effect" type="CharacterBody2D"]
+script = ExtResource("1_yexel")
+
+[node name="particles" type="GPUParticles2D" parent="."]
 amount = 512
-lifetime = 2.0
-speed_scale = 2.29
-explosiveness = 1.0
-process_material = SubResource("ShaderMaterial_60ebb")
-texture = ExtResource("1_dwoij")
+lifetime = 0.8
+explosiveness = 0.7
+process_material = SubResource("ShaderMaterial_qdwtr")

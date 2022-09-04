@@ -4,20 +4,12 @@ extends CharacterBody2D
 signal killed(zombie: Zombie)
 
 @export var move_speed: int = 2000
-
 var current_color: int = Globals.COLORS.RED
+
+@onready var DeathEffect := preload('res://effects/death_effect.tscn')
 
 func set_color(color_index: int):
     current_color = color_index
-
-func kill():
-    var ripple_zynth: ZynthWave = Globals.spawn_zynth(global_position)
-    ripple_zynth.set_color(current_color)
-    ripple_zynth.scale *= 0.35
-    
-    emit_signal("killed", self)
-    
-    queue_free();
     
 func _ready():
     _setup_color()
@@ -35,3 +27,16 @@ func _physics_process(delta):
     velocity = speed * move_speed * delta
     
     move_and_slide()
+    
+func kill():
+    var ripple_zynth: ZynthWave = Globals.spawn_zynth(global_position)  
+    ripple_zynth.set_color(current_color)
+    ripple_zynth.scale *= 0.35
+    
+    var death_effect = DeathEffect.instantiate();
+    death_effect.global_position = global_position;
+    
+    emit_signal("killed", self)
+    call_deferred('add_sibling', death_effect)
+    
+    queue_free();

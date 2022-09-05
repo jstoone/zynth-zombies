@@ -262,6 +262,10 @@ void process() {
 //			vec4(0.000, 0.000, 0.000, 0.0)) * hue_rot_s;
 //	COLOR = hue_rot_mat * color_value;
 
+    if (COLOR.a > 0.0) {
+        COLOR.a -= 2.0 / LIFETIME * DELTA;
+    }
+
 	TRANSFORM[0] = vec4(cos(CUSTOM.x), -sin(CUSTOM.x), 0.0, 0.0);
 	TRANSFORM[1] = vec4(sin(CUSTOM.x), cos(CUSTOM.x), 0.0, 0.0);
 	TRANSFORM[2] = vec4(0.0, 0.0, 1.0, 0.0);
